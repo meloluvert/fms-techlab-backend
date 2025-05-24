@@ -10,4 +10,4 @@ const getUser = (id: number): Promise<User> => {
     })
 }
 
-export {getUser}
+export  {getUser}
