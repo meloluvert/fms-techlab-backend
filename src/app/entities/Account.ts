@@ -24,8 +24,17 @@ import {
     @ManyToOne(() => AccountType, (accountType) => accountType.accounts)
     accountType: AccountType;
   
-    @Column()
+    @Column({type:"integer"})
     balance: number;
+    
+    @Column()
+    name: string;
+
+    @Column({
+      type:"varchar",
+      length:7
+    })
+    color: string;
   
     @Column({
       type: "text",

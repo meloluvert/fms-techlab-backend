@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use('/', routes); // Use the main 'routes' router. Your 'userRouter' is already included in 'routes'.
+app.use(routes); // Use the main 'routes' router. Your 'userRouter' is already included in 'routes'.
 // app.use('/users', userRouter); // REMOVA OU COMENTE ESTA LINHA - ESTA É A DUPLICAÇÃO/PROBLEMA POTENCIAL
 
 try {
