@@ -16,7 +16,7 @@ export class Transaction extends BaseEntity {
   @Column({
     type: "integer",
   })
-  value: number;
+  amount: number;
 
   @Column({
     type: "text",
@@ -36,4 +36,10 @@ export class Transaction extends BaseEntity {
     nullable: false,
   })
   destinationAccount: Account;
+
+  @Column()
+  destinationBalance: number;
+  
+  @Column()
+  originBalance: number;
 }

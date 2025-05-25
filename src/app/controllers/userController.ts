@@ -74,7 +74,6 @@ userRouter.post(
 
 userRouter.post(
   "/usuario/excluir",
-  // Tipagem explícita: Request<Params, ResBody, ReqBody, ReqQuery>
   async (req: Request, res: Response): Promise<any> => {
     const {id } = req.body;
 

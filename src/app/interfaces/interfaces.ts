@@ -27,15 +27,18 @@ export interface IAccount {
 }
 
 export interface ITransaction {
-    type: string;
+    type?: string;
     amount: number; // valor transferido
     sourceAccount?: {
-        name: string;
-        balance: number;
+        name?: string;
+        id?: string
+        balance?: number;
     };
     destinationAccount?: {
-        name: string;
-        balance: number;
+        name?: string;
+        balance?: number;
+        id?: string
     };
-    date: string;
+    description?: string
+    date?: string;
 }

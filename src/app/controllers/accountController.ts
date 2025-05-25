@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { newType, getType } from "../repositories/AccountTypesRepository";
-import { deleteAccount, editAccount, newAccount } from "../repositories/AccountRepository";
+import { deleteAccount, editAccount, getAccount, newAccount } from "../repositories/AccountRepository";
 
 export const accountRouter = Router();
 accountRouter.post(
@@ -56,6 +56,31 @@ accountRouter.post(
 
 //crie o conta/editar/:id
 
+
+
+accountRouter.post(
+  "/conta/",
+  // Tipagem explícita: Request<Params, ResBody, ReqBody, ReqQuery>
+  async (req: Request, res: Response): Promise<any> => {
+    const { id , user_id} = req.body;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "Id da conta inexistente" });
+    }
+
+    try {
+      const account = await getAccount({id, user_id});
+      return res.status(201).json(account);
+    } catch (error) {
+      console.error("Erro ao ver conta: ", error);
+      // Considere tratar erros específicos (ex: email duplicado)
+      // Opcionalmente, passe o erro para um middleware de erro: next(error);
+      return res.status(500).json({ message: "Erro ao deletar conta" });
+    }
+  }
+);
 
   accountRouter.post(
     "/conta/excluir",
