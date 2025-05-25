@@ -1,5 +1,5 @@
 export interface IUser {
-    id?:number,
+    id?:string,
     name: string,
     email: string,
     password?: string
@@ -10,13 +10,14 @@ export interface IUser {
 export interface IAccountType{
     name: string;
     id?: number;
+    user_id?: string 
 }
 
 export interface IAccount {
     name?: string;
     id?: string;
-    balance: string;
-    type?: string;
+    balance?: string;
+    type_id?: string;
     updated_at?:string;
     created_at?:string;
     description?:string;

@@ -21,7 +21,9 @@ import {
     @ManyToOne(() => User, (user) => user.accounts)
     user: User;
   
-    @ManyToOne(() => AccountType, (accountType) => accountType.accounts)
+    @ManyToOne(() => AccountType, (accountType) => accountType.accounts,{
+      cascade: ["remove"],
+    })
     accountType: AccountType;
   
     @Column({type:"integer"})

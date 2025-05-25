@@ -7,7 +7,7 @@ import {
     BaseEntity,
     DeleteDateColumn,
     OneToMany,
-    ManyToOne
+    ManyToOne, ManyToMany, JoinTable
   } from "typeorm";
 import { Account } from "./Account";
   import { User } from "./User";
@@ -23,8 +23,15 @@ import { Account } from "./Account";
     })
     name:string
 
+    @ManyToMany(() => User)
+    @JoinTable()
+    user: User[]
+
     @OneToMany(() => Account, (account) => account.accountType)
     accounts: Account[]
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 
     
   

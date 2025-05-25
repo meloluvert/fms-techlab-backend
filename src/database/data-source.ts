@@ -1,6 +1,6 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { User } from "../app/entities"
+import { User } from "../app/entities/User"
 import { CreateUsers } from "../migrations"
 import { Account } from "../app/entities/Account"
 import { AccountType } from "../app/entities/AccountTypes"
