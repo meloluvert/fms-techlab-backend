@@ -6,7 +6,7 @@ import { AppDataSource } from './database/data-source';
 import { routes } from './app/routes/routes';
 import dotenv from "dotenv"
 dotenv.config({
-    path: path.resolve(__dirname, "./env.local") // Ajuste o caminho relativo conforme sua estrutura
+    path: path.resolve(__dirname, "./env.local")
   });
   export  const secret =process.env.JWT_SECRET
 

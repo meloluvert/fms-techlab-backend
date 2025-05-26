@@ -12,6 +12,7 @@
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
       "sourceMap": true,
-      "esModuleInterop": true
+      "esModuleInterop": true,
+      "types": ["node", "express", "./src/types/index.d.ts"]
    }
 }

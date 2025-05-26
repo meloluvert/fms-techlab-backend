@@ -7,6 +7,12 @@ export interface IUser {
     updated_at?:string 
 
 }
+
+export interface IUserPayload {
+    id: string;
+    email: string;
+  }
+  
 export interface IAccountType{
     name: string;
     id?: number;
