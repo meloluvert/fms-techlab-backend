@@ -3,6 +3,7 @@ import { newType, getType } from "../repositories/AccountTypesRepository";
 import { deleteAccount, editAccount, getAccount, newAccount } from "../repositories/AccountRepository";
 
 export const accountRouter = Router();
+
 accountRouter.post(
     "/conta/nova",
     // Tipagem explícita: Request<Params, ResBody, ReqBody, ReqQuery>
@@ -16,6 +17,10 @@ accountRouter.post(
       }
   
       try {
+
+     
+
+        
         const user = await newAccount({ name,description, type_id, color, balance, user_id});
         return res.status(201).json(user);
       } catch (error) {
@@ -50,12 +55,6 @@ accountRouter.post(
       }
     }
   );
-
-///conta/:id
-//ver histórico de transações
-
-//crie o conta/editar/:id
-
 
 
 accountRouter.post(

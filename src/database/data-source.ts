@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
 import { User } from "../app/entities/User"
-import { CreateUsers } from "../migrations"
+import { CreateUsers, StandardTypes } from "../migrations"
 import { Account } from "../app/entities/Account"
 import { AccountType } from "../app/entities/AccountTypes"
 import { Transaction } from "../app/entities/Transaction"
@@ -11,6 +11,6 @@ export const AppDataSource = new DataSource({
     synchronize: true,
     logging: false,
     entities: [User,AccountType ,Account, Transaction],
-    migrations: [CreateUsers],
+    migrations: [StandardTypes],
     subscribers: [],
 })

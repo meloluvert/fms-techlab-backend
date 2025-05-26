@@ -1,16 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import 'reflect-metadata';
+import path from "path";
 import { AppDataSource } from './database/data-source';
-import { routes } from './app/routes/routes'; // Keep this import
-// import { userRouter } from './app/controllers/userController'; // REMOVA ESTA LINHA
+import { routes } from './app/routes/routes';
+import dotenv from "dotenv"
+dotenv.config({
+    path: path.resolve(__dirname, "./env.local") // Ajuste o caminho relativo conforme sua estrutura
+  });
+  export  const secret =process.env.JWT_SECRET
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(routes); // Use the main 'routes' router. Your 'userRouter' is already included in 'routes'.
-// app.use('/users', userRouter); // REMOVA OU COMENTE ESTA LINHA - ESTA É A DUPLICAÇÃO/PROBLEMA POTENCIAL
+app.use(routes); 
 
 try {
     AppDataSource.initialize().then(() => {

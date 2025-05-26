@@ -13,8 +13,11 @@
    },
    "dependencies": {
       "@types/express-serve-static-core": "^5.0.6",
+      "bcryptjs": "^3.0.2",
       "cors": "^2.8.5",
+      "dotenv": "^16.5.0",
       "express-async-errors": "^3.1.1",
+      "jsonwebtoken": "^9.0.2",
       "reflect-metadata": "^0.2.2",
       "sqlite3": "^5.1.7",
       "typeorm": "0.3.24"
@@ -23,6 +26,7 @@
       "build": "tsc",
       "dev": "ts-node-dev src/server.ts",
       "start": "ts-node src/index.ts",
-      "typeorm": "typeorm-ts-node-commonjs"
+      "typeorm": "typeorm-ts-node-commonjs",
+      "migration:run": "npm run typeorm -- migration:run -d ./src/database/data-source.ts"
    }
 }

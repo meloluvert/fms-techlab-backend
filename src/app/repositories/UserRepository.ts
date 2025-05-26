@@ -4,9 +4,17 @@ import { AppDataSource } from "../../database/data-source";
 import { User } from "../entities/User";
 export const userRepository = AppDataSource.getRepository(User);
 
-const getUser = (id: string): Promise<User | null> => {
+const getUser = async (id: string): Promise<User | null> => {
   return userRepository.findOne({
     where: { id },
+    select: ['id', 'name', 'email']
+  });
+};
+
+const getUserWithPassword = async (email: string): Promise<User | null> => {
+  return userRepository.findOne({
+    where: { email },
+    select: ['id', 'name', 'email', 'password'] // Inclui a senha para comparar
   });
 };
 
@@ -45,4 +53,4 @@ const deleteUser = async (id: string): Promise<void> => {
   await userRepository.softDelete(id);
 };
 
-export { getUser, newUser, editUser, deleteUser };
+export { getUser, newUser, editUser, deleteUser, getUserWithPassword };
