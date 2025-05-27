@@ -3,12 +3,12 @@ import { IAccount, IAccountType } from "../interfaces/interfaces";
 import { Account } from "../entities/Account";
 import { AppDataSource } from "../../database/data-source";
 import { userRepository } from "./UserRepository";
-import { getTransactions } from "./TransactionRepository";
+import { getTransactions, newTransaction } from "./TransactionRepository";
 import { getType } from "./AccountTypesRepository";
 export const accountRepository = AppDataSource.getRepository(Account);
 const newAccount = async ({
   name,
-  type_id, // esse é o ID de accountType
+  type_id,
   balance,
   user_id,
   description,
@@ -16,19 +16,14 @@ const newAccount = async ({
 }: IAccount): Promise<Account> => {
   const accountTypeRepository = AppDataSource.getRepository(AccountType);
   const foundType = await accountTypeRepository.findOneBy({ id: Number(type_id) });
-  const foundUser = await userRepository.findOneBy({ id:user_id });
-  if (!foundType) {
-    throw new Error("Tipo de conta não encontrado");
-  }
+  const foundUser = await userRepository.findOneBy({ id: user_id });
 
-  if (!foundUser) {
-    throw new Error("usuário inválido");
-  }
+  if (!foundType) throw new Error("Tipo de conta não encontrado");
+  if (!foundUser) throw new Error("Usuário inválido");
 
   const account = accountRepository.create({
-  
     accountType: foundType,
-    user:foundUser,
+    user: foundUser,
     balance: Number(balance),
     description,
     color,
@@ -36,8 +31,19 @@ const newAccount = async ({
   });
 
   await accountRepository.save(account);
+
+  // Cria a transação de saldo inicial, se o saldo for maior que zero
+  if (Number(balance) > 0) {
+    await newTransaction({
+      amount: Number(balance),
+      description: "Saldo inicial",
+      destinationAccount: { id: account.id }
+    });
+  }
+
   return account;
 };
+
 
  const deleteAccount = async (id: string ) =>{
 
@@ -143,5 +149,39 @@ const getAccount = async ({
   };
 };
 
+const listAccounts = async (
+  user_id: string
+): Promise<
+  Array<IAccount>
+> => {
+  const accounts = await accountRepository.find({
+    where: { user: { id: user_id } }, // Filtra contas pelo user_id
+    relations: ["accountType"], // Traz o tipo da conta
+    select: {
+      id: true,
+      name: true,
+      balance: true,
+      color: true,
+      description: true,
+      created_at: true,
+      updated_at: true,
+      accountType: true, // Renomeado para 'type' no retorno
+    },
+  });
 
-export {editAccount, getAccount, deleteAccount, newAccount}
+  // Mapeia o resultado para o formato desejado
+  return accounts.map((account) => ({
+    id: account.id,
+    name: account.name,
+    balance: String(account.balance),
+    type: account.accountType, // Renomeia accountType para type
+    color: account.color,
+    description: account.description,
+    created_at: account.created_at,
+    updated_at: account.updated_at,
+  }));
+};
+
+
+
+export {editAccount, getAccount, deleteAccount, newAccount, listAccounts}

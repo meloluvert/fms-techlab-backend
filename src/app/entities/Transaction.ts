@@ -28,7 +28,7 @@ export class Transaction extends BaseEntity {
   created_at: Date;
 
   @ManyToOne(() => Account, (account) => account.transactionsSent, {
-    nullable: false,
+    nullable: true,
   })
   originAccount: Account;
 
@@ -40,6 +40,8 @@ export class Transaction extends BaseEntity {
   @Column()
   destinationBalance: number;
   
-  @Column()
+  @Column( {
+    nullable: true,
+  })
   originBalance: number;
 }

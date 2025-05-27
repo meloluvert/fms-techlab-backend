@@ -24,8 +24,8 @@ export interface IAccount {
     id?: string;
     balance?: string;
     type_id?: string;
-    updated_at?:string;
-    created_at?:string;
+    updated_at?:Date;
+    created_at?:Date;
     description?:string;
     color?: string;
     user_id?: string
@@ -35,16 +35,8 @@ export interface IAccount {
 export interface ITransaction {
     type?: string;
     amount: number; // valor transferido
-    sourceAccount?: {
-        name?: string;
-        id?: string
-        balance?: number;
-    };
-    destinationAccount?: {
-        name?: string;
-        balance?: number;
-        id?: string
-    };
+    sourceAccount?: IAccount
+    destinationAccount?: IAccount
     description?: string
     date?: string;
 }
