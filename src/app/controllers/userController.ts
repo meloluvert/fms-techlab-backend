@@ -10,8 +10,6 @@ import {
   deleteUser,
   getUserWithPassword,
 } from "../repositories/UserRepository";
-import { authMiddleware } from "../middlewares/auth";
-import { json } from "stream/consumers";
 const userRouter = Router();
 
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
