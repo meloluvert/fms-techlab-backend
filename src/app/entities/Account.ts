@@ -44,13 +44,14 @@ import {
     })
     description: string;
   
-    @CreateDateColumn()
-    created_at: Date;
+    @CreateDateColumn({type: "date"})
+    created_at: Date | string;
   
     @UpdateDateColumn({
       nullable: true,
+      type:"date"
     })
-    updated_at: Date;
+    updated_at: Date | string;
   
     @DeleteDateColumn()
     deleted_at: Date;

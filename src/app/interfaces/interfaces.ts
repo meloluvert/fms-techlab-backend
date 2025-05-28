@@ -24,8 +24,8 @@ export interface IAccount {
     id?: string;
     balance?: string;
     type_id?: string;
-    updated_at?:Date;
-    created_at?:Date;
+    updated_at?:Date | string;
+    created_at?:Date | string;
     description?:string;
     color?: string;
     user_id?: string

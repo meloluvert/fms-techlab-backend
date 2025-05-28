@@ -5,6 +5,8 @@ import { AppDataSource } from "../../database/data-source";
 import { userRepository } from "./UserRepository";
 import { getTransactions, newTransaction } from "./TransactionRepository";
 import { getType } from "./AccountTypesRepository";
+
+import { formatMoney, formatDate } from "../../utils/formatter";
 export const accountRepository = AppDataSource.getRepository(Account);
 const newAccount = async ({
   name,
@@ -17,19 +19,20 @@ const newAccount = async ({
   const accountTypeRepository = AppDataSource.getRepository(AccountType);
   const foundType = await accountTypeRepository.findOneBy({ id: Number(type_id) });
   const foundUser = await userRepository.findOneBy({ id: user_id });
-
+console.log(balance) //140000
   if (!foundType) throw new Error("Tipo de conta não encontrado");
   if (!foundUser) throw new Error("Usuário inválido");
 
   const account = accountRepository.create({
     accountType: foundType,
     user: foundUser,
-    balance: Number(balance),
     description,
+    balance:0,
     color,
     name,
   });
-
+  
+// no banco está salvando 280 mil.. só que no console tá 140 mil
   await accountRepository.save(account);
 
   // Cria a transação de saldo inicial, se o saldo for maior que zero
@@ -106,24 +109,21 @@ const getAccount = async ({
   id: string;
   user_id: string;
 }): Promise<{
-  //cuidar disso depois
   name: string;
   id: string;
   balance: string;
   type: AccountType;
-  updated_at?:Date;
-  created_at?:Date;
-  description?:string;
+  updated_at?: string | null;
+  created_at?: string | null;
+  description?: string;
   color?: string;
-  user_id?: string
+  user_id?: string;
   transactions: any[];
 }> => {
-  // Verifica se a conta existe e pertence ao usuário
   const account = await accountRepository.findOne({
     where: { id },
     relations: ["user", "accountType"],
   });
-  console.log(account)
 
   if (!account) {
     throw new Error("Conta não encontrada");
@@ -137,26 +137,22 @@ const getAccount = async ({
 
   return {
     name: account.name,
-  id: account.id,
-  balance: String(account.balance),
-  type: account.accountType,
-  updated_at:account.updated_at,
-  created_at:account.created_at,
-  description:account.description,
-  color: account.color,
-  user_id: account.user.id,
-    transactions: transactions,
+    id: account.id,
+    balance: formatMoney(account.balance),
+    type: account.accountType,
+    updated_at: formatDate(account.updated_at as Date),
+    created_at: formatDate(account.created_at as Date),
+    description: account.description,
+    color: account.color,
+    user_id: account.user.id,
+    transactions,
   };
 };
 
-const listAccounts = async (
-  user_id: string
-): Promise<
-  Array<IAccount>
-> => {
+const listAccounts = async (user_id: string): Promise<Array<IAccount>> => {
   const accounts = await accountRepository.find({
-    where: { user: { id: user_id } }, // Filtra contas pelo user_id
-    relations: ["accountType"], // Traz o tipo da conta
+    where: { user: { id: user_id } },
+    relations: ["accountType"],
     select: {
       id: true,
       name: true,
@@ -165,20 +161,19 @@ const listAccounts = async (
       description: true,
       created_at: true,
       updated_at: true,
-      accountType: true, // Renomeado para 'type' no retorno
+      accountType: true,
     },
   });
 
-  // Mapeia o resultado para o formato desejado
   return accounts.map((account) => ({
     id: account.id,
     name: account.name,
-    balance: String(account.balance),
-    type: account.accountType, // Renomeia accountType para type
+    balance: formatMoney(account.balance),
+    type: account.accountType,
     color: account.color,
     description: account.description,
-    created_at: account.created_at,
-    updated_at: account.updated_at,
+    created_at: formatDate(account.created_at as Date),
+    updated_at: formatDate(account.updated_at as Date),
   }));
 };
 

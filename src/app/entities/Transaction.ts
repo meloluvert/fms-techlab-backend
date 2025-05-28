@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   BaseEntity,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { Account } from "./Account";
 
@@ -13,35 +14,38 @@ export class Transaction extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({
-    type: "integer",
-  })
-  amount: number;
+  @Column({ type: "integer" })
+  amount: number| string;
 
-  @Column({
-    type: "text",
-    nullable: true,
-  })
+  @Column({ type: "text", nullable: true })
   description: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({type: "date"})
+  created_at: Date | string;
+
+  // FK explícita para originAccountId
+  @Column({ type: "uuid", nullable: true })
+  originAccountId: string | null;
 
   @ManyToOne(() => Account, (account) => account.transactionsSent, {
     nullable: true,
   })
-  originAccount: Account;
+  @JoinColumn({ name: "originAccountId" }) // liga a FK à relação
+  originAccount: Account | null;
+
+  // FK explícita para destinationAccountId
+  @Column({ type: "uuid" })
+  destinationAccountId: string;
 
   @ManyToOne(() => Account, (account) => account.transactionsReceived, {
     nullable: false,
   })
+  @JoinColumn({ name: "destinationAccountId" }) // liga a FK à relação
   destinationAccount: Account;
 
-  @Column()
-  destinationBalance: number;
-  
-  @Column( {
-    nullable: true,
-  })
-  originBalance: number;
+  @Column({ type: "integer" })
+  destinationBalance: number | string;
+
+  @Column({ nullable: true, type: "integer" })
+  originBalance: number | null | string;
 }

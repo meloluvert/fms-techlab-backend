@@ -4,6 +4,7 @@ import { userRepository } from "./UserRepository";
 import { Account } from "../entities/Account";
 import { accountRepository } from "./AccountRepository";
 import { ITransaction } from "../interfaces/interfaces";
+import { formatMoney, formatDate } from "../../utils/formatter";
 export const transactionRepository = AppDataSource.getRepository(Transaction);
 const newTransaction = async ({
   amount,
@@ -29,7 +30,6 @@ const newTransaction = async ({
     await accountRepository.save(origin);
   }
 
-  // Para saldo inicial, apenas credita na conta destino
   destination.balance = Number(amount) + Number(destination.balance);
   await accountRepository.save(destination);
 
@@ -52,6 +52,7 @@ const newTransaction = async ({
 // Se tiver user_id, lembre-se que o usuário não tem relação com a transação, mas sim com as contas, então vai ter que fazer uns "join" para chegar lá... ou seja pega transacoes com id das contas do usuário....
 
 //se tiver account_id, confirma se a conta é do usuário e retorna transações com aquela conta
+
 const getTransactions = async ({
   user_id,
   account_id,
@@ -62,7 +63,6 @@ const getTransactions = async ({
   const user = await userRepository.findOne({
     where: { id: user_id },
     relations: ["accounts"],
-    withDeleted: true, // para garantir que contas soft-deleted sejam carregadas
   });
 
   if (!user) {
@@ -71,32 +71,47 @@ const getTransactions = async ({
 
   const accountIds = user.accounts.map((acc) => acc.id);
 
-  if (account_id) {
-    // Confirma se a conta pertence ao usuário
-    if (!accountIds.includes(account_id)) {
-      throw new Error("A conta não pertence a este usuário");
+  const transactions = await transactionRepository
+  .createQueryBuilder("transaction")
+  .leftJoinAndSelect("transaction.originAccount", "origin")
+  .leftJoinAndSelect("transaction.destinationAccount", "dest")
+  .addSelect(["transaction.originAccountId", "transaction.destinationAccountId"]) // seleciona os ids das contas
+  .withDeleted()
+  .where(
+    account_id
+      ? "origin.id = :account_id OR dest.id = :account_id"
+      : "origin.id IN (:...ids) OR dest.id IN (:...ids)",
+    account_id ? { account_id } : { ids: accountIds }
+  )
+  .orderBy("transaction.created_at", "DESC")
+  .getMany();
+
+
+  // Para buscar as contas deletadas no histórico de transações
+  for (const t of transactions) {
+    if (!t.originAccount && t.originAccountId) {
+      const originAccountWithDeleted = await accountRepository.findOne({
+        where: { id: t.originAccountId },
+        withDeleted: true,
+      });
+      if (originAccountWithDeleted) t.originAccount = originAccountWithDeleted;
+    }
+    if (!t.destinationAccount && t.destinationAccountId) {
+      const destAccountWithDeleted = await accountRepository.findOne({
+        where: { id: t.destinationAccountId },
+        withDeleted: true,
+      });
+      if (destAccountWithDeleted) t.destinationAccount = destAccountWithDeleted;
     }
 
-    return await transactionRepository
-      .createQueryBuilder("transaction")
-      .leftJoinAndSelect("transaction.originAccount", "origin")
-      .leftJoinAndSelect("transaction.destinationAccount", "dest")
-      .withDeleted() // Inclui soft-deleted nas contas relacionadas
-      .where("origin.id = :account_id OR dest.id = :account_id", { account_id })
-      .orderBy("transaction.created_at", "DESC")
-      .getMany();
+    // Formata valores monetários e datas dentro da transação, se desejar
+    t.amount = formatMoney(t.amount);
+    t.created_at = formatDate(t.created_at as Date);
+    if (t.originBalance !== undefined) t.originBalance = formatMoney(t.originBalance);
+    if (t.destinationBalance !== undefined) t.destinationBalance = formatMoney(t.destinationBalance);
   }
-
-  return await transactionRepository
-    .createQueryBuilder("transaction")
-    .leftJoinAndSelect("transaction.originAccount", "origin")
-    .leftJoinAndSelect("transaction.destinationAccount", "dest")
-    .withDeleted() // Inclui soft-deleted nas contas relacionadas
-    .where("origin.id IN (:...ids) OR dest.id IN (:...ids)", {
-      ids: accountIds,
-    })
-    .orderBy("transaction.created_at", "DESC")
-    .getMany();
+  
+  return transactions;
 };
 
 export { newTransaction, getTransactions };
