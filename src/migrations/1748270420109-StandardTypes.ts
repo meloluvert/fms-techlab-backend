@@ -6,13 +6,13 @@ export class StandardTypes1748270420109 implements MigrationInterface {
         await queryRunner.query(`
             INSERT INTO account_types (id, name)
             VALUES 
-                (1, 'Corrente'),
-                (2, 'Poupança'),
-                (3, 'Crédito'),
-                (4, 'Investimento'),
-                (5, 'Salário'),
-                (6, 'Pagamento'),
-                (7, 'Empréstimo')
+                ('1', 'Corrente'),
+                ('2', 'Poupança'),
+                ('3', 'Crédito'),
+                ('4', 'Investimento'),
+                ('5', 'Salário'),
+                ('6', 'Pagamento'),
+                ('7', 'Empréstimo')
             ON CONFLICT (id) DO NOTHING
         `);
     }

@@ -42,7 +42,7 @@ async function list(req: Request, res: Response):Promise<any> {
 }
 
 async function show(req: Request, res: Response) :Promise<any> {
-  const id = Number(req.params.id);
+  const id = req.params.id;
   if (!id) {
     return res.status(400).json({ message: "ID inválido" });
   }
@@ -60,7 +60,7 @@ async function show(req: Request, res: Response) :Promise<any> {
 
 // Editar tipo
 async function update(req: Request, res: Response):Promise<any> {
-  const id = Number(req.params.id);
+  const id = req.params.id;
   const { name } = req.body;
   if (!id) {
     return res.status(400).json({ message: "ID inválido" });
@@ -79,7 +79,8 @@ async function update(req: Request, res: Response):Promise<any> {
 
 // Deletar tipo
 async function remove(req: Request, res: Response) :Promise<any>{
-  const id = Number(req.params.id);
+  const user_id = req.user.id;
+  const id  = req.params.id
   if (!id) {
     return res.status(400).json({ message: "ID inválido" });
   }

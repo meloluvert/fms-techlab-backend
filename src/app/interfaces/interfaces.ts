@@ -15,7 +15,7 @@ export interface IUserPayload {
   
 export interface IAccountType{
     name: string;
-    id?: number;
+    id?: string;
     user_id?: string 
 }
 

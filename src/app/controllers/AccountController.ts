@@ -22,6 +22,7 @@ async function index(req: Request, res: Response): Promise<any> {
 async function create(req: Request, res: Response): Promise<any> {
   const { name, description, color, type_id, balance } = req.body;
   const user_id = req.user.id;
+
   if (!name || !type_id) {
     return res
       .status(400)

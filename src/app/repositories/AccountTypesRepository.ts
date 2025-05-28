@@ -2,7 +2,7 @@ import { AppDataSource } from "../../database/data-source";
 import { AccountType } from "../entities/AccountTypes";
 import { IAccountType } from "../interfaces/interfaces";
 import { userRepository } from "./UserRepository";
-const accountTypesRepository = AppDataSource.getRepository(AccountType);
+export const accountTypesRepository = AppDataSource.getRepository(AccountType);
 export const newType = async ({ name, user_id }: IAccountType): Promise<AccountType> => {
   // Buscar o usuário
   const user = await userRepository.findOneBy({ id: user_id });
@@ -22,7 +22,7 @@ export const newType = async ({ name, user_id }: IAccountType): Promise<AccountT
   return accountType;
 };
 
-export const getType = async (id: number): Promise<AccountType | null> => {
+export const getType = async (id: string): Promise<AccountType | null> => {
   return accountTypesRepository.findOne({
     where: { id },
   });
@@ -41,22 +41,31 @@ export const editType = async ({id, name}:IAccountType): Promise<AccountType> =>
     await accountTypesRepository.save(accountType);
     return accountType
   }
-export const deleteType = async (id: number): Promise<void> => {
-  const accountType = await accountTypesRepository.findOneBy({ id });
-
-  if (!accountType) {
-    throw new Error("Usuário não encontrado");
-  }
-  await accountTypesRepository.softDelete(id);
-};
+  export const deleteType = async (id: string): Promise<void> => {
+    const accountType = await accountTypesRepository.findOne({
+      where: { id },
+      relations: ["accounts"], // carrega as contas associadas
+    });
+  
+    if (!accountType) {
+      throw new Error("Tipo de conta não encontrado");
+    }
+  
+    if (accountType.accounts && accountType.accounts.length > 0) {
+      throw new Error("Não é possível excluir tipo de conta que possui contas associadas.");
+    }
+  
+    await accountTypesRepository.softDelete(id);
+  };
 
 export const getTypes = async (userId: string): Promise<AccountType[]> => {
   const accountTypes = await AppDataSource
-    .getRepository(AccountType)
-    .createQueryBuilder("type")
-    .leftJoin("type.user", "user") // relação ManyToMany
-    .where("user.id IS NULL OR user.id = :userId", { userId })
-    .getMany();
+  .getRepository(AccountType)
+  .createQueryBuilder("type")
+  .leftJoinAndSelect("type.user", "user") // importante usar leftJoinAndSelect para trazer o array
+  .where("user.id IS NULL OR user.id = :userId", { userId })
+  .getMany();
+
 
   return accountTypes;
 };

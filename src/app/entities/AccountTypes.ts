@@ -14,8 +14,8 @@ import { Account } from "./Account";
   
   @Entity("account_types")
   export class AccountType extends BaseEntity{
-    @PrimaryGeneratedColumn("increment")
-    id: number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string | number;
 
     @Column({
         type: "varchar",

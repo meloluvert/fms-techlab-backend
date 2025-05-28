@@ -79,6 +79,53 @@ export const registerUser = async (
     return res.status(500).json({ message: "Erro ao criar usuário" });
   }
 };
+
+
+// PUT /user - atualiza dados do usuário autenticado
+export async function update(req: Request, res: Response): Promise<any> {
+  const { name, email, password, newPassword } = req.body;
+  const { id } = req.user;
+
+  if (!id) {
+    return res.status(400).json({ message: "ID do usuário ausente" });
+  }
+
+  // Verifica se pelo menos um campo para atualizar foi enviado
+  if (!name && !email && !password && !newPassword) {
+    return res.status(400).json({ message: "Para editar, é necessário mudar algo!" });
+  }
+
+  try {
+    // Se o usuário quer alterar a senha, deve enviar a senha atual (password) e a nova senha (newPassword)
+    let hashedNewPassword: string | undefined = undefined;
+    if (newPassword) {
+      if (!password) {
+        return res.status(400).json({ message: "Senha atual é necessária para alterar a senha." });
+      }
+      // Aqui você pode verificar se a senha atual está correta, por exemplo:
+      // const userFromDb = await findUserById(id);
+      // const isPasswordValid = bcrypt.compareSync(password, userFromDb.passwordHash);
+      // if (!isPasswordValid) return res.status(401).json({ message: "Senha atual incorreta." });
+
+      // Hash da nova senha
+      hashedNewPassword = bcrypt.hashSync(newPassword, 10);
+    }
+
+    // Chama a função para editar usuário, passando os dados
+    const updatedUser = await editUser({
+      id,
+      name,
+      email,
+      password: hashedNewPassword, // já com hash
+    });
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Erro ao editar usuário:", error);
+    return res.status(500).json({ message: "Erro ao editar usuário" });
+  }
+}
+
 // GET /user - retorna os dados do usuário autenticado
 async function show(req: Request, res: Response): Promise<any> {
   const { id } = req.user;
@@ -101,26 +148,6 @@ async function show(req: Request, res: Response): Promise<any> {
   }
 }
 
-// PUT /user - atualiza dados do usuário autenticado
-async function update(req: Request, res: Response): Promise<any> {
-  const { name, password, email } = req.body;
-  const { id } = req.user;
-
-  if (!name && !email && !password) {
-    return res.status(400).json({ message: "Para editar, é necessário mudar algo!" });
-  }
-  if (!id) {
-    return res.status(400).json({ message: "ID do usuário ausente" });
-  }
-
-  try {
-    const user = await editUser({ name, email, password, id });
-    return res.status(200).json(user);
-  } catch (error) {
-    console.error("Erro ao editar usuário:", error);
-    return res.status(500).json({ message: "Erro ao editar usuário" });
-  }
-}
 
 // DELETE /user - exclui o usuário autenticado
 async function remove(req: Request, res: Response): Promise<any> {

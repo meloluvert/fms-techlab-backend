@@ -6,6 +6,8 @@ import { userRepository } from "./UserRepository";
 import { getTransactions, newTransaction } from "./TransactionRepository";
 import { getType } from "./AccountTypesRepository";
 
+import { accountTypesRepository } from "./AccountTypesRepository";
+
 import { formatMoney, formatDate } from "../../utils/formatter";
 export const accountRepository = AppDataSource.getRepository(Account);
 const newAccount = async ({
@@ -17,9 +19,8 @@ const newAccount = async ({
   color,
 }: IAccount): Promise<Account> => {
   const accountTypeRepository = AppDataSource.getRepository(AccountType);
-  const foundType = await accountTypeRepository.findOneBy({ id: Number(type_id) });
+  const foundType = await accountTypeRepository.findOneBy({ id: type_id });
   const foundUser = await userRepository.findOneBy({ id: user_id });
-console.log(balance) //140000
   if (!foundType) throw new Error("Tipo de conta não encontrado");
   if (!foundUser) throw new Error("Usuário inválido");
 
@@ -27,12 +28,12 @@ console.log(balance) //140000
     accountType: foundType,
     user: foundUser,
     description,
-    balance:0,
+    balance: 0,
     color,
     name,
   });
-  
-// no banco está salvando 280 mil.. só que no console tá 140 mil
+
+  // no banco está salvando 280 mil.. só que no console tá 140 mil
   await accountRepository.save(account);
 
   // Cria a transação de saldo inicial, se o saldo for maior que zero
@@ -40,34 +41,30 @@ console.log(balance) //140000
     await newTransaction({
       amount: Number(balance),
       description: "Saldo inicial",
-      destinationAccount: { id: account.id }
+      destinationAccount: { id: account.id },
     });
   }
 
   return account;
 };
 
-
- const deleteAccount = async (id: string ) =>{
-
+const deleteAccount = async (id: string) => {
   const account = await accountRepository.findOneBy({ id });
   if (!account) {
     throw new Error("Conta não encontrada ");
-  }else if(account.balance != 0){
+  } else if (account.balance != 0) {
     throw new Error("Esvazie a conta ");
   }
   await accountRepository.softDelete(id);
-
-
-}
+};
 //editAccount
 // pega o id, o nome, a descrição, a cor, type_id e edita... preciso que você se atente a essa relação, ok, pois o type_id preisa ser do usuário...
- const editAccount = async ({
+const editAccount = async ({
   id,
   name,
   description,
   color,
-  type_id
+  type_id,
 }: IAccount): Promise<Account> => {
   const account = await accountRepository.findOne({
     where: { id },
@@ -78,14 +75,24 @@ console.log(balance) //140000
     throw new Error("Conta não encontrada");
   }
 
-  // Buscar o novo tipo
-  const accountTypeRepository = AppDataSource.getRepository(AccountType);
-  const newType = await accountTypeRepository
-    .createQueryBuilder("type")
-    .leftJoin("type.user", "user")
-    .where("type.id = :typeId", { typeId: type_id })
-    .andWhere("user.id = :userId OR user.id IS NULL", { userId: account.user.id })
-    .getOne();
+  const newType = await accountTypesRepository
+  .createQueryBuilder("type")
+  .leftJoinAndSelect("type.user", "user")
+  .where("type.id = :typeId", { typeId: type_id })
+  .getOne();
+
+if (!newType) {
+  throw new Error("Tipo não encontrado");
+}
+
+const isUniversal = !newType.user || newType.user.length === 0;
+const belongsToUser = newType.user.some(u => u.id === account.user.id);
+
+if (!isUniversal && !belongsToUser) {
+  throw new Error("Tipo de conta não pertence a este usuário");
+}
+
+
 
   if (!newType) {
     throw new Error("Tipo de conta inválido para este usuário");
@@ -177,6 +184,4 @@ const listAccounts = async (user_id: string): Promise<Array<IAccount>> => {
   }));
 };
 
-
-
-export {editAccount, getAccount, deleteAccount, newAccount, listAccounts}
+export { editAccount, getAccount, deleteAccount, newAccount, listAccounts };
