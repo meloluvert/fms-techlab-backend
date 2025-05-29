@@ -3,11 +3,10 @@ import accountController from "../controllers/AccountController";
 
 const accountRouter = Router();
 
-accountRouter.get("/", accountController.index);               // Listar todas as contas
-accountRouter.post("/", accountController.create);             // Criar nova conta
-accountRouter.get("/:id", accountController.show);             // Mostrar conta específica
-accountRouter.put("/:id", accountController.update);           // Atualizar conta (substituir)
-accountRouter.patch("/:id", accountController.update);         // Atualizar conta (parcial)
-accountRouter.delete("/:id", accountController.remove);        // Deletar conta
+accountRouter.get("/", accountController.index);               
+accountRouter.post("/", accountController.create);           
+accountRouter.get("/:id", accountController.show);             
+accountRouter.put("/:id", accountController.update);          
+accountRouter.delete("/:id", accountController.remove);        
 
 export default accountRouter ;

@@ -9,7 +9,7 @@ import { transactionRepository } from "../repositories";
 const newTransaction = async ({
   amount,
   description,
-  sourceAccount,
+  originAccount,
   destinationAccount,
 }: ITransaction): Promise<Transaction> => {
   const destination = await accountRepository.findOneBy({
@@ -17,8 +17,8 @@ const newTransaction = async ({
   });
 
   let origin = null;
-  if (sourceAccount && sourceAccount.id) {
-    origin = await accountRepository.findOneBy({ id: sourceAccount.id });
+  if (originAccount && originAccount.id) {
+    origin = await accountRepository.findOneBy({ id: originAccount.id });
     if (!origin) throw new Error("Conta de origem não encontrada");
     if (origin.balance - Number(amount) < 0) {
       throw new Error("Saldo insuficiente");
@@ -44,13 +44,6 @@ const newTransaction = async ({
   await transactionRepository.save(transaction);
   return transaction;
 };
-
-//validar se transaction foi feita
-
-//pega o id do usuário e faz uma realção gigantesta para pegar:
-// Se tiver user_id, lembre-se que o usuário não tem relação com a transação, mas sim com as contas, então vai ter que fazer uns "join" para chegar lá... ou seja pega transacoes com id das contas do usuário....
-
-//se tiver account_id, confirma se a conta é do usuário e retorna transações com aquela conta
 
 const getTransactions = async ({
   user_id,
@@ -89,7 +82,6 @@ const getTransactions = async ({
     .orderBy("transaction.created_at", "DESC")
     .getMany();
 
-  // Para buscar as contas deletadas no histórico de transações
   for (const t of transactions) {
     if (!t.originAccount && t.originAccountId) {
       const originAccountWithDeleted = await accountRepository.findOne({
@@ -106,7 +98,6 @@ const getTransactions = async ({
       if (destAccountWithDeleted) t.destinationAccount = destAccountWithDeleted;
     }
 
-    // Formata valores monetários e datas dentro da transação, se desejar
     t.amount = formatMoney(t.amount);
     t.created_at = formatDate(t.created_at as Date);
     if (t.originBalance !== undefined)

@@ -7,12 +7,11 @@ export interface IUser {
     updated_at?:string 
 
 }
-
 export interface IUserPayload {
     id: string;
     email: string;
   }
-  
+
 export interface IAccountType{
     name: string;
     id?: string;
@@ -34,8 +33,8 @@ export interface IAccount {
 
 export interface ITransaction {
     type?: string;
-    amount: number; // valor transferido
-    sourceAccount?: IAccount
+    amount: number; 
+    originAccount?: IAccount
     destinationAccount?: IAccount
     description?: string
     date?: string;

@@ -101,8 +101,8 @@ async function remove(req: Request, res: Response): Promise<any> {
   }
 
   try {
-    const result = await deleteAccount(id);
-    return res.status(204).send(); // 204 No Content para delete
+    await deleteAccount(id);
+    return res.status(204).send(); 
   } catch (error) {
     console.error("Erro ao deletar conta:", error);
     return res.status(500).json({ message: "Erro ao deletar conta" });

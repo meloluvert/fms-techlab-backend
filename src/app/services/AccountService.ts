@@ -1,10 +1,8 @@
 import { AccountType } from "../entities/AccountTypes"; // certifique-se de importar
 import { IAccount, IAccountType } from "../interfaces/interfaces";
 import { Account } from "../entities/Account";
-import { AppDataSource } from "../../database/data-source";
 import { userRepository, accountTypesRepository, accountRepository } from "../repositories";
 import { getTransactions, newTransaction } from "./TransactionService";
-import { getType } from "./AccountTypesService";
 
 import { formatMoney, formatDate } from "../../utils/formatter";
 const newAccount = async ({
@@ -30,10 +28,8 @@ const newAccount = async ({
     name,
   });
 
-  // no banco está salvando 280 mil.. só que no console tá 140 mil
   await accountRepository.save(account);
 
-  // Cria a transação de saldo inicial, se o saldo for maior que zero
   if (Number(balance) > 0) {
     await newTransaction({
       amount: Number(balance),
@@ -53,8 +49,6 @@ const deleteAccount = async (id: string) => {
   }
   await accountRepository.softDelete(id);
 };
-//editAccount
-// pega o id, o nome, a descrição, a cor, type_id e edita... preciso que você se atente a essa relação, ok, pois o type_id preisa ser do usuário...
 const editAccount = async ({
   id,
   name,

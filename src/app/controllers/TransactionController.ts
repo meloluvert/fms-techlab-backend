@@ -5,9 +5,9 @@ import {
 } from "../services/TransactionService";
 
 async function create(req: Request, res: Response): Promise<any> {
-  const { amount, description, sourceAccount, destinationAccount } = req.body;
-  const user_id = req.user.id;
-  if (!amount || !sourceAccount) {
+  const { amount, description, originAccount, destinationAccount } = req.body;
+  const user_id = req.user?.id;
+  if (!amount || !originAccount) {
     return res.status(400).json({ message: "Campos obrigatórios faltando" });
   }
   if (!user_id) {
@@ -18,7 +18,7 @@ async function create(req: Request, res: Response): Promise<any> {
     const transaction = await newTransaction({
       amount,
       description,
-      sourceAccount,
+      originAccount,
       destinationAccount,
     });
     return res.status(201).json(transaction);
@@ -28,11 +28,11 @@ async function create(req: Request, res: Response): Promise<any> {
   }
 }
 
-// GET /transactions?user_id=...&account_id=...
+
 async function index(req: Request, res: Response): Promise<any> {
   try {
     const { account_id } = req.query;
-    const user_id = req.user.id;
+    const user_id = req.user?.id;
 
     const transactions = await getTransactions({
       user_id: user_id as string,

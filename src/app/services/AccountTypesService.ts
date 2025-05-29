@@ -7,19 +7,16 @@ export const newType = async ({
   name,
   user_id,
 }: IAccountType): Promise<AccountType> => {
-  // Buscar o usuário
   const user = await userRepository.findOneBy({ id: user_id });
   if (!user) {
     throw new Error("Usuário não encontrado");
   }
 
-  // Criar o tipo de conta e associar o usuário
   const accountType = accountTypesRepository.create({
     name,
-    user: [user], // ← como é ManyToMany, precisa ser array
+    user: [user],
   });
 
-  // Salvar com relação ManyToMany
   await accountTypesRepository.save(accountType);
 
   return accountType;

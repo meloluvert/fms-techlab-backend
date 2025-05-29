@@ -14,12 +14,12 @@ describe("newTransaction", () => {
   });
 
   it("realiza uma nova transação com origem e destino válidos", async () => {
-    const sourceAccount = { id: "acc-1", balance: 2000 };
+    const originAccount = { id: "acc-1", balance: 2000 };
     const destinationAccount = { id: "acc-2", balance: 1000 };
 
     (accountRepository.findOneBy as jest.Mock)
       .mockImplementation(({ id }) => {
-        if (id === sourceAccount.id) return Promise.resolve({ ...sourceAccount });
+        if (id === originAccount.id) return Promise.resolve({ ...originAccount });
         if (id === destinationAccount.id) return Promise.resolve({ ...destinationAccount });
         return null;
       });
@@ -31,7 +31,7 @@ describe("newTransaction", () => {
     const result = await newTransaction({
       amount: 500,
       description: "Teste transferência",
-      sourceAccount,
+      originAccount,
       destinationAccount,
     });
 
@@ -40,17 +40,17 @@ describe("newTransaction", () => {
     expect(transactionRepository.create).toHaveBeenCalled();
     expect(transactionRepository.save).toHaveBeenCalled();
     expect(result.amount).toBe(500);
-    expect(result.originAccount.id).toBe(sourceAccount.id);
+    expect(result.originAccount.id).toBe(originAccount.id);
     expect(result.destinationAccount.id).toBe(destinationAccount.id);
   });
 
   it("lança erro se saldo insuficiente", async () => {
-    const sourceAccount = { id: "acc-1", balance: 100 };
+    const originAccount = { id: "acc-1", balance: 100 };
     const destinationAccount = { id: "acc-2", balance: 1000 };
 
     (accountRepository.findOneBy as jest.Mock)
       .mockImplementation(({ id }) => {
-        if (id === sourceAccount.id) return Promise.resolve({ ...sourceAccount });
+        if (id === originAccount.id) return Promise.resolve({ ...originAccount });
         if (id === destinationAccount.id) return Promise.resolve({ ...destinationAccount });
         return null;
       });
@@ -59,14 +59,14 @@ describe("newTransaction", () => {
       newTransaction({
         amount: 200,
         description: "Teste saldo insuficiente",
-        sourceAccount,
+        originAccount,
         destinationAccount,
       })
     ).rejects.toThrow("Saldo insuficiente");
   });
 
   it("lança erro se conta de origem não encontrada", async () => {
-    const sourceAccount = { id: "acc-1", balance: 1000 };
+    const originAccount = { id: "acc-1", balance: 1000 };
     const destinationAccount = { id: "acc-2", balance: 1000 };
 
     (accountRepository.findOneBy as jest.Mock)
@@ -79,19 +79,19 @@ describe("newTransaction", () => {
       newTransaction({
         amount: 100,
         description: "Teste conta origem inexistente",
-        sourceAccount,
+        originAccount,
         destinationAccount,
       })
     ).rejects.toThrow("Conta de origem não encontrada");
   });
 
   it("lança erro se valor da transação for zero", async () => {
-    const sourceAccount = { id: "acc-1", balance: 1000 };
+    const originAccount = { id: "acc-1", balance: 1000 };
     const destinationAccount = { id: "acc-2", balance: 1000 };
 
     (accountRepository.findOneBy as jest.Mock)
       .mockImplementation(({ id }) => {
-        if (id === sourceAccount.id) return Promise.resolve({ ...sourceAccount });
+        if (id === originAccount.id) return Promise.resolve({ ...originAccount });
         if (id === destinationAccount.id) return Promise.resolve({ ...destinationAccount });
         return null;
       });
@@ -100,7 +100,7 @@ describe("newTransaction", () => {
       newTransaction({
         amount: 0,
         description: "Teste valor zero",
-        sourceAccount,
+        originAccount,
         destinationAccount,
       })
     ).rejects.toThrow("É necessário transferir algum valor");

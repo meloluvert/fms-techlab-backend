@@ -1,6 +1,5 @@
 
 import { IUser } from "../interfaces/interfaces";
-import { AppDataSource } from "../../database/data-source";
 import { User } from "../entities/User";
 import { userRepository } from "../repositories";
 

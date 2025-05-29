@@ -6,8 +6,7 @@ import {
   editType,
   deleteType,
 } from "../services/AccountTypesService";
-import { AccountType } from "../entities/AccountTypes";
-
+import * as user from "../../types/index"
 async function create(req: Request, res: Response): Promise<any> {
   const { name, user_id } = req.body;
   if (!name) {
@@ -19,13 +18,12 @@ async function create(req: Request, res: Response): Promise<any> {
     const type = await newType({ name, user_id });
     return res.status(201).json(type);
   } catch (error) {
-    console.error("Erro ao criar tipo: ", error);
     return res.status(500).json({ message: "Erro ao criar tipo" });
   }
 }
 
 async function list(req: Request, res: Response): Promise<any> {
-  const user_id = req.user.id;
+  const user_id = req.user?.id;
   if (!user_id) {
     return res.status(400).json({ message: "ID do usuário é obrigatório" });
   }
@@ -58,7 +56,6 @@ async function show(req: Request, res: Response): Promise<any> {
   }
 }
 
-// Editar tipo
 async function update(req: Request, res: Response): Promise<any> {
   const id = req.params.id;
   const { name } = req.body;
@@ -77,7 +74,6 @@ async function update(req: Request, res: Response): Promise<any> {
   }
 }
 
-// Deletar tipo
 async function remove(req: Request, res: Response): Promise<any> {
   const user_id = req.user.id;
   const id = req.params.id;

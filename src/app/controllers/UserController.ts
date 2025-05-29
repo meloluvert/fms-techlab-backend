@@ -96,6 +96,7 @@ export async function update(req: Request, res: Response): Promise<any> {
   }
 
   try {
+
     // Se o usuário quer alterar a senha, deve enviar a senha atual (password) e a nova senha (newPassword)
     let hashedNewPassword: string | undefined = undefined;
     if (newPassword) {
@@ -104,12 +105,6 @@ export async function update(req: Request, res: Response): Promise<any> {
           .status(400)
           .json({ message: "Senha atual é necessária para alterar a senha." });
       }
-      // Aqui você pode verificar se a senha atual está correta, por exemplo:
-      // const userFromDb = await findUserById(id);
-      // const isPasswordValid = bcrypt.compareSync(password, userFromDb.passwordHash);
-      // if (!isPasswordValid) return res.status(401).json({ message: "Senha atual incorreta." });
-
-      // Hash da nova senha
       hashedNewPassword = bcrypt.hashSync(newPassword, 10);
     }
 
@@ -118,7 +113,7 @@ export async function update(req: Request, res: Response): Promise<any> {
       id,
       name,
       email,
-      password: hashedNewPassword, // já com hash
+      password: hashedNewPassword,
     });
 
     return res.status(200).json(updatedUser);
@@ -128,7 +123,7 @@ export async function update(req: Request, res: Response): Promise<any> {
   }
 }
 
-// GET /user - retorna os dados do usuário autenticado
+
 async function show(req: Request, res: Response): Promise<any> {
   const { id } = req.user;
   if (!id || typeof id !== "string") {

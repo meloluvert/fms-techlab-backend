@@ -18,7 +18,6 @@ app.use(routes);
 
 try {
     AppDataSource.initialize().then(() => {
-        console.log('Ok');
         app.listen(3000, () => console.log("Servidor rodando na porta 3000"));
     });
 } catch (error) {
