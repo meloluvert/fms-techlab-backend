@@ -5,7 +5,7 @@ import {
   editAccount,
   deleteAccount,
   listAccounts,
-} from "../repositories/AccountRepository";
+} from "../services/AccountService";
 
 async function index(req: Request, res: Response): Promise<any> {
   const user_id = req.user.id; // Supondo que o user_id vem do token JWT

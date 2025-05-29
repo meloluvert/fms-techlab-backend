@@ -1,16 +1,16 @@
 import { AppDataSource } from "../../database/data-source";
 import { Transaction } from "../entities/Transaction";
-import { userRepository } from "./UserRepository";
+import { userRepository } from "../repositories";
 import { Account } from "../entities/Account";
-import { accountRepository } from "./AccountRepository";
+import { accountRepository } from "../repositories";
 import { ITransaction } from "../interfaces/interfaces";
 import { formatMoney, formatDate } from "../../utils/formatter";
-export const transactionRepository = AppDataSource.getRepository(Transaction);
+import { transactionRepository } from "../repositories";
 const newTransaction = async ({
   amount,
   description,
   sourceAccount,
-  destinationAccount
+  destinationAccount,
 }: ITransaction): Promise<Transaction> => {
   const destination = await accountRepository.findOneBy({
     id: destinationAccount.id,
@@ -45,7 +45,6 @@ const newTransaction = async ({
   return transaction;
 };
 
-
 //validar se transaction foi feita
 
 //pega o id do usuário e faz uma realção gigantesta para pegar:
@@ -69,23 +68,26 @@ const getTransactions = async ({
     throw new Error("Usuário não encontrado");
   }
 
+
   const accountIds = user.accounts.map((acc) => acc.id);
 
   const transactions = await transactionRepository
-  .createQueryBuilder("transaction")
-  .leftJoinAndSelect("transaction.originAccount", "origin")
-  .leftJoinAndSelect("transaction.destinationAccount", "dest")
-  .addSelect(["transaction.originAccountId", "transaction.destinationAccountId"]) // seleciona os ids das contas
-  .withDeleted()
-  .where(
-    account_id
-      ? "origin.id = :account_id OR dest.id = :account_id"
-      : "origin.id IN (:...ids) OR dest.id IN (:...ids)",
-    account_id ? { account_id } : { ids: accountIds }
-  )
-  .orderBy("transaction.created_at", "DESC")
-  .getMany();
-
+    .createQueryBuilder("transaction")
+    .leftJoinAndSelect("transaction.originAccount", "origin")
+    .leftJoinAndSelect("transaction.destinationAccount", "dest")
+    .addSelect([
+      "transaction.originAccountId",
+      "transaction.destinationAccountId",
+    ]) // seleciona os ids das contas
+    .withDeleted()
+    .where(
+      account_id
+        ? "origin.id = :account_id OR dest.id = :account_id"
+        : "origin.id IN (:...ids) OR dest.id IN (:...ids)",
+      account_id ? { account_id } : { ids: accountIds }
+    )
+    .orderBy("transaction.created_at", "DESC")
+    .getMany();
 
   // Para buscar as contas deletadas no histórico de transações
   for (const t of transactions) {
@@ -107,10 +109,12 @@ const getTransactions = async ({
     // Formata valores monetários e datas dentro da transação, se desejar
     t.amount = formatMoney(t.amount);
     t.created_at = formatDate(t.created_at as Date);
-    if (t.originBalance !== undefined) t.originBalance = formatMoney(t.originBalance);
-    if (t.destinationBalance !== undefined) t.destinationBalance = formatMoney(t.destinationBalance);
+    if (t.originBalance !== undefined)
+      t.originBalance = formatMoney(t.originBalance);
+    if (t.destinationBalance !== undefined)
+      t.destinationBalance = formatMoney(t.destinationBalance);
   }
-  
+
   return transactions;
 };
 

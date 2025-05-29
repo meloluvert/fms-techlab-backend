@@ -2,7 +2,7 @@
 import { IUser } from "../interfaces/interfaces";
 import { AppDataSource } from "../../database/data-source";
 import { User } from "../entities/User";
-export const userRepository = AppDataSource.getRepository(User);
+import { userRepository } from "../repositories";
 
 const getUser = async (id: string): Promise<User | null> => {
   return userRepository.findOne({

@@ -22,7 +22,7 @@ export interface IAccountType{
 export interface IAccount {
     name?: string;
     id?: string;
-    balance?: string;
+    balance?: string | number;
     type_id?: string;
     updated_at?:Date | string;
     created_at?:Date | string;

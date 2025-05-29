@@ -1,18 +1,19 @@
 {
    "compilerOptions": {
-      "lib": [
-         "es2021"
-      ],
-      "target": "es2021",
-      "skipLibCheck": true,
-      "module": "commonjs",
-      "moduleResolution": "node",
-      "rootDir": "./src",
-      "outDir": "./build",
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "sourceMap": true,
-      "esModuleInterop": true,
-      "types": ["node", "express", "./src/types/index.d.ts"]
-   }
-}
+     "lib": ["es2021"],
+     "target": "es2021",
+     "skipLibCheck": true,
+     "module": "commonjs",
+     "moduleResolution": "node",
+     "rootDir": "./src",
+     "outDir": "./build",
+     "emitDecoratorMetadata": true,
+     "experimentalDecorators": true,
+     "sourceMap": true,
+     "esModuleInterop": true,
+     "types": ["jest", "node", "express"],  // 👈 Adiciona "jest" aqui
+     "resolveJsonModule": true              // 👈 Recomendado para importar JSON se necessário
+   },
+   "include": ["src/**/*"]
+ }
+ 

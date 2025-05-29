@@ -5,10 +5,10 @@ import {
   getType,
   editType,
   deleteType,
-} from "../repositories/AccountTypesRepository";
+} from "../services/AccountTypesService";
 import { AccountType } from "../entities/AccountTypes";
 
-async function create(req: Request, res: Response) :Promise<any>{
+async function create(req: Request, res: Response): Promise<any> {
   const { name, user_id } = req.body;
   if (!name) {
     return res
@@ -24,8 +24,8 @@ async function create(req: Request, res: Response) :Promise<any>{
   }
 }
 
-async function list(req: Request, res: Response):Promise<any> {
-   const user_id = req.user.id
+async function list(req: Request, res: Response): Promise<any> {
+  const user_id = req.user.id;
   if (!user_id) {
     return res.status(400).json({ message: "ID do usuário é obrigatório" });
   }
@@ -41,7 +41,7 @@ async function list(req: Request, res: Response):Promise<any> {
   }
 }
 
-async function show(req: Request, res: Response) :Promise<any> {
+async function show(req: Request, res: Response): Promise<any> {
   const id = req.params.id;
   if (!id) {
     return res.status(400).json({ message: "ID inválido" });
@@ -59,7 +59,7 @@ async function show(req: Request, res: Response) :Promise<any> {
 }
 
 // Editar tipo
-async function update(req: Request, res: Response):Promise<any> {
+async function update(req: Request, res: Response): Promise<any> {
   const id = req.params.id;
   const { name } = req.body;
   if (!id) {
@@ -78,9 +78,9 @@ async function update(req: Request, res: Response):Promise<any> {
 }
 
 // Deletar tipo
-async function remove(req: Request, res: Response) :Promise<any>{
+async function remove(req: Request, res: Response): Promise<any> {
   const user_id = req.user.id;
-  const id  = req.params.id
+  const id = req.params.id;
   if (!id) {
     return res.status(400).json({ message: "ID inválido" });
   }

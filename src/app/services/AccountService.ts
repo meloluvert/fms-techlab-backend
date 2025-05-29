@@ -2,14 +2,11 @@ import { AccountType } from "../entities/AccountTypes"; // certifique-se de impo
 import { IAccount, IAccountType } from "../interfaces/interfaces";
 import { Account } from "../entities/Account";
 import { AppDataSource } from "../../database/data-source";
-import { userRepository } from "./UserRepository";
-import { getTransactions, newTransaction } from "./TransactionRepository";
-import { getType } from "./AccountTypesRepository";
-
-import { accountTypesRepository } from "./AccountTypesRepository";
+import { userRepository, accountTypesRepository, accountRepository } from "../repositories";
+import { getTransactions, newTransaction } from "./TransactionService";
+import { getType } from "./AccountTypesService";
 
 import { formatMoney, formatDate } from "../../utils/formatter";
-export const accountRepository = AppDataSource.getRepository(Account);
 const newAccount = async ({
   name,
   type_id,
@@ -18,11 +15,11 @@ const newAccount = async ({
   description,
   color,
 }: IAccount): Promise<Account> => {
-  const accountTypeRepository = AppDataSource.getRepository(AccountType);
-  const foundType = await accountTypeRepository.findOneBy({ id: type_id });
+  const foundType = await accountTypesRepository.findOneBy({ id: type_id });
   const foundUser = await userRepository.findOneBy({ id: user_id });
-  if (!foundType) throw new Error("Tipo de conta não encontrado");
+
   if (!foundUser) throw new Error("Usuário inválido");
+  if (!foundType) throw new Error("Tipo de conta não encontrado");
 
   const account = accountRepository.create({
     accountType: foundType,
@@ -44,7 +41,6 @@ const newAccount = async ({
       destinationAccount: { id: account.id },
     });
   }
-
   return account;
 };
 
@@ -76,23 +72,21 @@ const editAccount = async ({
   }
 
   const newType = await accountTypesRepository
-  .createQueryBuilder("type")
-  .leftJoinAndSelect("type.user", "user")
-  .where("type.id = :typeId", { typeId: type_id })
-  .getOne();
+    .createQueryBuilder("type")
+    .leftJoinAndSelect("type.user", "user")
+    .where("type.id = :typeId", { typeId: type_id })
+    .getOne();
 
-if (!newType) {
-  throw new Error("Tipo não encontrado");
-}
+  if (!newType) {
+    throw new Error("Tipo não encontrado");
+  }
 
-const isUniversal = !newType.user || newType.user.length === 0;
-const belongsToUser = newType.user.some(u => u.id === account.user.id);
+  const isUniversal = !newType.user || newType.user.length === 0;
+  const belongsToUser = newType.user.some((u) => u.id === account.user.id);
 
-if (!isUniversal && !belongsToUser) {
-  throw new Error("Tipo de conta não pertence a este usuário");
-}
-
-
+  if (!isUniversal && !belongsToUser) {
+    throw new Error("Tipo de conta não pertence a este usuário");
+  }
 
   if (!newType) {
     throw new Error("Tipo de conta inválido para este usuário");

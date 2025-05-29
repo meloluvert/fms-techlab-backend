@@ -9,12 +9,11 @@ import {
   newUser,
   deleteUser,
   getUserWithPassword,
-} from "../repositories/UserRepository";
-const userRouter = Router();
+} from "../services/UserService";
 
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
   const { password, email } = req.body;
-  console.log("tentativa de log in ", email)
+  console.log("tentativa de log in ", email);
 
   if (!email || !password) {
     return res.status(400).json({ message: "Email e senha são obrigatórios" });
@@ -80,7 +79,6 @@ export const registerUser = async (
   }
 };
 
-
 // PUT /user - atualiza dados do usuário autenticado
 export async function update(req: Request, res: Response): Promise<any> {
   const { name, email, password, newPassword } = req.body;
@@ -92,7 +90,9 @@ export async function update(req: Request, res: Response): Promise<any> {
 
   // Verifica se pelo menos um campo para atualizar foi enviado
   if (!name && !email && !password && !newPassword) {
-    return res.status(400).json({ message: "Para editar, é necessário mudar algo!" });
+    return res
+      .status(400)
+      .json({ message: "Para editar, é necessário mudar algo!" });
   }
 
   try {
@@ -100,7 +100,9 @@ export async function update(req: Request, res: Response): Promise<any> {
     let hashedNewPassword: string | undefined = undefined;
     if (newPassword) {
       if (!password) {
-        return res.status(400).json({ message: "Senha atual é necessária para alterar a senha." });
+        return res
+          .status(400)
+          .json({ message: "Senha atual é necessária para alterar a senha." });
       }
       // Aqui você pode verificar se a senha atual está correta, por exemplo:
       // const userFromDb = await findUserById(id);
@@ -130,7 +132,9 @@ export async function update(req: Request, res: Response): Promise<any> {
 async function show(req: Request, res: Response): Promise<any> {
   const { id } = req.user;
   if (!id || typeof id !== "string") {
-    return res.status(400).json({ message: "ID do usuário inválido ou ausente" });
+    return res
+      .status(400)
+      .json({ message: "ID do usuário inválido ou ausente" });
   }
   try {
     const user = await getUser(id);
@@ -148,8 +152,6 @@ async function show(req: Request, res: Response): Promise<any> {
   }
 }
 
-
-// DELETE /user - exclui o usuário autenticado
 async function remove(req: Request, res: Response): Promise<any> {
   const { id } = req.user;
   if (!id) {
