@@ -13,14 +13,12 @@ import {
 
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
   const { password, email } = req.body;
-  console.log("tentativa de log in ", email);
 
   if (!email || !password) {
     return res.status(400).json({ message: "Email e senha são obrigatórios" });
   }
 
   try {
-    // Busca o usuário COM a senha (apenas para login)
     const userWithPassword = await getUserWithPassword(email);
 
     if (!userWithPassword) {

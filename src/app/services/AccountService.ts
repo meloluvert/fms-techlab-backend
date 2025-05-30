@@ -1,7 +1,11 @@
 import { AccountType } from "../entities/AccountTypes"; // certifique-se de importar
 import { IAccount, IAccountType } from "../interfaces/interfaces";
 import { Account } from "../entities/Account";
-import { userRepository, accountTypesRepository, accountRepository } from "../repositories";
+import {
+  userRepository,
+  accountTypesRepository,
+  accountRepository,
+} from "../repositories";
 import { getTransactions, newTransaction } from "./TransactionService";
 
 import { formatMoney, formatDate } from "../../utils/formatter";
@@ -53,6 +57,7 @@ const editAccount = async ({
   id,
   name,
   description,
+  balance,
   color,
   type_id,
 }: IAccount): Promise<Account> => {
@@ -91,8 +96,11 @@ const editAccount = async ({
   account.description = description ?? account.description;
   account.color = color;
   account.accountType = newType;
-
+  if (account.balance != Number(balance)) {
+    account.balance = Number(balance);
+  }
   await accountRepository.save(account);
+  
 
   return account;
 };
