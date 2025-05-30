@@ -6,10 +6,10 @@ import { AppDataSource } from './database/data-source';
 import { routes } from './app/routes/routes';
 import dotenv from "dotenv"
 dotenv.config({
-    path: path.resolve(__dirname, "./env.local")
+    path: path.resolve(__dirname, "../.env")
   });
-  export  const secret =process.env.JWT_SECRET
-
+export  const secret =process.env.JWT_SECRET
+export  const BD_URL =process.env.BD_URL
 const app = express();
 
 app.use(cors());
