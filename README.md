@@ -42,37 +42,40 @@ src/
 - Node.js (v18+)
 - NPM
 - SQLite instalado (ou use o `.sqlite` local que o projeto cria)
-
+[Clique aqui para instalar o node/npm](https://balta.io/blog/node-npm-instalacao-configuracao-e-primeiros-passos)
+[Veja mais sobre o SQLite aqui](https://www.alura.com.br/artigos/sqlite-da-instalacao-ate-primeira-tabela)
 ---
 
 ### 📥 Instalação
 
 ```bash
-git clone https://github.com/seu-usuario/backend-fms-techlab.git
-cd backend-fms-techlab
+git clone https://github.com/meloluvert/fms-techlab-backend.git
+cd fms-techlab-backend
 npm install
 ```
-
 ---
 
 ### 🔐 Variáveis de ambiente
 
-Crie um arquivo `.env` com:
+Use o arquivo `.env` com:
 
 ```env
 JWT_SECRET=sua_chave_secreta
 ```
+A chave é **essencial** para o funcionamento do projeto, sem ele, o projeto não começa
 
 ---
 
 ### 🧱 Banco de dados
 
-O projeto usa **SQLite** como banco local.  
+Acesse o BD em formato de diagrama [Aqui](https://drive.google.com/file/d/1gENQFJfJYmKs3O7DAJMlrRTCQbv6QVsS/view?usp=sharing)
+O projeto usa **SQLite** como banco local, ele está localizado em src/database/db.sqlite (se não houver, crie o arquivo)
 Antes de iniciar, rode a migration para popular com os tipos básicos de conta:
 
 ```bash
-npm run migration
+npm run migration:run
 ```
+
 
 ---
 
@@ -100,7 +103,7 @@ Authorization: Bearer SEU_TOKEN
 ---
 
 ## 🧪 Testes
-
+- estão em src/tests/
 - Testes escritos com `Jest`
 - Para rodar:
 
@@ -143,14 +146,18 @@ Exemplo de teste implementado: `AccountService` (`newAccount`)
 - Você pode criar um serviço web (Free Tier)
 - O SQLite funciona, mas em produção é recomendado Neon (Postgres)
 
-> Veja o [guia completo de deploy no Render aqui](https://render.com/docs/deploy-node-express-app)
+### 🔧 Banco de Dados hospedado no [Neon](https://neon.com/)
 
+- Você pode criar um serviço web (Free Tier)
+- O SQLite funciona, mas em produção é recomendado Neon (Postgres)
 ---
 
 ## 📎 Documentação geral
 
-- [Documentação do Frontend](https://github.com/seu-usuario/frontend-fms-techlab)
-- [Especificação oficial (PDF)](./Desafio%20WebApp.pdf)
+- [Documentação do Frontend](https://github.com/meloluvert/fms-techlab-frontend)
+- [Modelagem BD](https://drive.google.com/file/d/1gENQFJfJYmKs3O7DAJMlrRTCQbv6QVsS/view?usp=sharing)
+- [Documentação do Desafio](https://github.com/tech4humans-brasil/techlab-ceu/blob/main/Finan%C3%A7as%20(Webapp)/Desafio%20WebApp.pdf)
+
 
 ---
 

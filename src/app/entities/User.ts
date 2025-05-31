@@ -8,7 +8,6 @@ import {
   DeleteDateColumn
 } from "typeorm";
 
-import { AccountType } from "./AccountTypes";
 import { Account } from "./Account";
 
 @Entity("users")

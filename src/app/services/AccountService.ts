@@ -96,11 +96,23 @@ const editAccount = async ({
   account.description = description ?? account.description;
   account.color = color;
   account.accountType = newType;
-  if (account.balance != Number(balance)) {
-    account.balance = Number(balance);
-  }
+
   await accountRepository.save(account);
-  
+  if (account.balance != Number(balance)) {
+    if (account.balance > Number(balance)) {
+      await newTransaction({
+        amount: account.balance - Number(balance),
+        description: "",
+        originAccount: { id: account.id },
+      });
+    } else {
+      await newTransaction({
+        amount: Number(balance) - account.balance,
+        description: "",
+        destinationAccount: { id: account.id },
+      });
+    }
+  }
 
   return account;
 };

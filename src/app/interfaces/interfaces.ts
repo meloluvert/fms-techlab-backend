@@ -34,8 +34,8 @@ export interface IAccount {
 export interface ITransaction {
     type?: string;
     amount: number; 
-    originAccount?: IAccount
-    destinationAccount?: IAccount
+    originAccount?: IAccount | null
+    destinationAccount?: IAccount | null
     description?: string
     date?: string;
 }

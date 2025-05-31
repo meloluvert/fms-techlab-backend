@@ -15,12 +15,12 @@ export class Transaction extends BaseEntity {
   id: string;
 
   @Column({ type: "integer" })
-  amount: number| string;
+  amount: number | string;
 
   @Column({ type: "text", nullable: true })
   description: string;
 
-  @CreateDateColumn({type: "date"})
+  @CreateDateColumn()
   created_at: Date | string;
 
   // FK explícita para originAccountId
@@ -30,20 +30,19 @@ export class Transaction extends BaseEntity {
   @ManyToOne(() => Account, (account) => account.transactionsSent, {
     nullable: true,
   })
-  @JoinColumn({ name: "originAccountId" }) // liga a FK à relação
+  @JoinColumn({ name: "originAccountId" }) 
   originAccount: Account | null;
 
-  // FK explícita para destinationAccountId
-  @Column({ type: "uuid" })
+  @Column({ type: "uuid", nullable:true })
   destinationAccountId: string;
 
   @ManyToOne(() => Account, (account) => account.transactionsReceived, {
     nullable: false,
   })
   @JoinColumn({ name: "destinationAccountId" }) // liga a FK à relação
-  destinationAccount: Account;
+  destinationAccount: Account | null;
 
-  @Column({ type: "integer" })
+  @Column({ type: "integer", nullable:true })
   destinationBalance: number | string;
 
   @Column({ nullable: true, type: "integer" })

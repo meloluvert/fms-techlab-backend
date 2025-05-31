@@ -6,9 +6,11 @@ import {
   deleteAccount,
   listAccounts,
 } from "../services/AccountService";
+import * as user from "../../types/index"
+import { User } from "../entities/User";
 
 async function index(req: Request, res: Response): Promise<any> {
-  const user_id = req.user.id; // Supondo que o user_id vem do token JWT
+  const user_id = req.user?.id; 
 
   try {
     const accounts = await listAccounts(user_id);
@@ -28,7 +30,6 @@ async function create(req: Request, res: Response): Promise<any> {
       .status(400)
       .json({ message: "Preencha o tipo E o nome da conta" });
   }
-
   try {
     const account = await newAccount({
       name,
@@ -47,7 +48,7 @@ async function create(req: Request, res: Response): Promise<any> {
 
 async function show(req: Request, res: Response): Promise<any> {
   const { id } = req.params;
-  const user_id = req.user.id; // se precisar validar usuário
+  const user_id = req.user?.id; // se precisar validar usuário
 
   if (!id) {
     return res.status(400).json({ message: "Id da conta inexistente" });
@@ -65,7 +66,7 @@ async function show(req: Request, res: Response): Promise<any> {
 async function update(req: Request, res: Response): Promise<any> {
   const { id } = req.params;
   const user_id = req.user.id;
-  const { name, description, color, type_id } = req.body;
+  const { name, description, color, type_id, balance } = req.body;
 
   if (!name && !type_id && !description && !color) {
     return res
@@ -83,6 +84,7 @@ async function update(req: Request, res: Response): Promise<any> {
       id,
       name,
       description,
+      balance,
       type_id,
       color,
     });

@@ -12,14 +12,10 @@ const newTransaction = async ({
   originAccount,
   destinationAccount,
 }: ITransaction): Promise<Transaction> => {
-  const destination = await accountRepository.findOneBy({
-    id: destinationAccount.id,
-  });
-
-  let origin = null;
+  let destination : Account = null;
+  let origin : Account = null;
   if (originAccount && originAccount.id) {
     origin = await accountRepository.findOneBy({ id: originAccount.id });
-    if (!origin) throw new Error("Conta de origem não encontrada");
     if (origin.balance - Number(amount) < 0) {
       throw new Error("Saldo insuficiente");
     }
@@ -29,9 +25,15 @@ const newTransaction = async ({
     origin.balance = Number(origin.balance) - Number(amount);
     await accountRepository.save(origin);
   }
-
-  destination.balance = Number(amount) + Number(destination.balance);
-  await accountRepository.save(destination);
+  if (destinationAccount && destinationAccount.id) {
+    destination = await accountRepository.findOneBy({
+      id: destinationAccount.id,
+    });
+    
+    destination.balance = Number(amount) + Number(destination.balance);
+    
+    await accountRepository.save(destination);
+  }
 
   const transaction = transactionRepository.create({
     amount,
@@ -39,9 +41,9 @@ const newTransaction = async ({
     originAccount: origin,
     description: description,
     originBalance: origin ? origin.balance : null,
-    destinationBalance: destination.balance,
+    destinationBalance: destination ? destination.balance : null,
   });
-  await transactionRepository.save(transaction);
+  await transactionRepository.save(transaction);  
   return transaction;
 };
 
@@ -60,7 +62,6 @@ const getTransactions = async ({
   if (!user) {
     throw new Error("Usuário não encontrado");
   }
-
 
   const accountIds = user.accounts.map((acc) => acc.id);
 

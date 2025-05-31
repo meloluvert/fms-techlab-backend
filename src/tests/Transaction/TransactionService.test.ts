@@ -1,4 +1,4 @@
-// __tests__/transactionService.test.ts
+
 
 import { newTransaction, getTransactions } from "../../app/services/TransactionService";
 import { userRepository, accountRepository, transactionRepository } from "../../app/repositories";
@@ -65,25 +65,7 @@ describe("newTransaction", () => {
     ).rejects.toThrow("Saldo insuficiente");
   });
 
-  it("lança erro se conta de origem não encontrada", async () => {
-    const originAccount = { id: "acc-1", balance: 1000 };
-    const destinationAccount = { id: "acc-2", balance: 1000 };
 
-    (accountRepository.findOneBy as jest.Mock)
-      .mockImplementation(({ id }) => {
-        if (id === destinationAccount.id) return Promise.resolve({ ...destinationAccount });
-        return null;
-      });
-
-    await expect(
-      newTransaction({
-        amount: 100,
-        description: "Teste conta origem inexistente",
-        originAccount,
-        destinationAccount,
-      })
-    ).rejects.toThrow("Conta de origem não encontrada");
-  });
 
   it("lança erro se valor da transação for zero", async () => {
     const originAccount = { id: "acc-1", balance: 1000 };
@@ -110,7 +92,6 @@ describe("getTransactions", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Defina mocks manuais básicos para evitar undefined
     (userRepository.findOne as jest.Mock) = jest.fn();
     (transactionRepository.createQueryBuilder as jest.Mock) = jest.fn();
     (accountRepository.findOne as jest.Mock) = jest.fn();

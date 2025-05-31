@@ -212,7 +212,7 @@ describe("AccountService", () => {
         accountType: {},
       };
 
-      const mockType = { user: [{ id: "user-2" }] }; // user diferente
+      const mockType = { user: [{ id: "user-2" }] }; 
       const mockQueryBuilder = {
         leftJoinAndSelect: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
@@ -254,7 +254,7 @@ describe("AccountService", () => {
   
       expect(result.id).toBe("acc-1");
       expect(result.name).toBe("Conta A");
-      expect(result.balance).toMatch(/^\D*\d/); // balance formatado como string com símbolo monetário
+      expect(result.balance).toMatch(/^\D*\d/); 
       expect(result.type).toEqual(mockAccount.accountType);
       expect(result.description).toBe("descrição da conta");
       expect(result.color).toBe("blue");
@@ -272,7 +272,7 @@ describe("AccountService", () => {
     it("lança erro se conta não pertence ao usuário", async () => {
       const mockAccount = {
         id: "acc-1",
-        user: { id: "user-2" }, // usuário diferente
+        user: { id: "user-2" }, 
         accountType: {},
       };
   

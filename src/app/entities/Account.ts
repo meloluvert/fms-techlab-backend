@@ -44,12 +44,11 @@ import {
     })
     description: string;
   
-    @CreateDateColumn({type: "date"})
+    @CreateDateColumn()
     created_at: Date | string;
   
     @UpdateDateColumn({
-      nullable: true,
-      type:"date"
+      nullable: true
     })
     updated_at: Date | string;
   

@@ -3,7 +3,8 @@ import {
   newTransaction,
   getTransactions,
 } from "../services/TransactionService";
-
+import * as user from "../../types/index"
+import { User } from "../entities/User";
 async function create(req: Request, res: Response): Promise<any> {
   const { amount, description, originAccount, destinationAccount } = req.body;
   const user_id = req.user?.id;
