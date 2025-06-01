@@ -1,10 +1,10 @@
-# 🔐 Financial Management System — Backend
+# 💰 Financial Management System — Backend
 
-Este é o backend do sistema de **gestão financeira pessoal**, com autenticação JWT, CRUDs e integração com SQLite via TypeORM.
+Este é o backend do sistema de **gestão financeira pessoal**, com autenticação **JWT**, **CRUDs** e integração com **SQLite** via **TypeORM**.
 
 ---
 
-## 🚀 Tecnologias
+## 🖳 Tecnologias
 
 - **Node.js + Express**: servidor rápido e simples
 - **TypeORM**: ORM robusto com suporte a SQLite
@@ -23,14 +23,17 @@ src/
 ├── app/
 │   ├── controllers/      # Requisições HTTP (camada de entrada)
 │   ├── entities/         # Entidades do banco (Account, User, etc.)
-│   ├── interfaces/       # Tipagens
+│   ├── interfaces/       # Tipagens importantes
 │   ├── middleware/       # authMiddleware
-│   ├── services/         # Lógica de negócio (antes chamados de repositories)
+│   ├── services/         # Lógica de negócio 
+│   ├── repositories/     # Repositórios para acesso ao BD
 │   └── routes/           # Organização das rotas
 ├── database/
 │   ├── data-source.ts    # Conexão com o banco
 │   └── migrations/       # Migrations TypeORM
-├── tests/                # Testes unitários com Jest
+├── tests/                # Testes unitário com Jest
+├── types/                # Tipos globais adicionados
+├── utils/                # Funções de formatação
 ```
 
 ---
@@ -79,7 +82,7 @@ npm run migration:run
 
 ---
 
-### 🏃 Rodar o servidor
+### 🗄️ Rodar o servidor
 
 ```bash
 npm run dev
@@ -102,7 +105,7 @@ Authorization: Bearer SEU_TOKEN
 
 ---
 
-## 🧪 Testes
+## 📋 Testes
 - estão em src/tests/
 - Testes escritos com `Jest`
 - Para rodar:
@@ -121,11 +124,12 @@ Exemplo de teste implementado: `AccountService` (`newAccount`)
 |-------|---------------------|--------------------------|
 | POST  | `/user/register`    | Cadastro de usuário      |
 | POST  | `/user/login`       | Login e geração de token |
-| POST  | `/user/perfil`      | Retorna perfil do usuário (token) |
+| GET  | `/user/`      | Retorna perfil do usuário (token) |
 | POST  | `/account`          | Criação de conta         |
 | DELETE| `/account/:id`      | Soft delete              |
-| POST  | `/transaction`      | Criar transferência      |
+| POST  | `/transactions`      | Criar transferência      |
 | GET   | `/transactions`     | Buscar transações        |
+Todas as rotas exceto de registro e login de usuário **PRECISAM** do token passado no cabeçalho da requsição 
 
 ---
 

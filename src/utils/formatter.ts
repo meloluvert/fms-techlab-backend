@@ -5,7 +5,6 @@ export function formatDate(date?: Date | string | null): string | null {
     let d: Date;
   
     if (typeof date === "string") {
-      // Tenta criar um objeto Date válido a partir da string
       const replaced = date.replace(" ", "T");
       d = new Date(replaced);
   
@@ -18,8 +17,6 @@ export function formatDate(date?: Date | string | null): string | null {
       d = date;
     }
     
-    // Subtrai 3 horas (em milissegundos) para ajustar o fuso horário
-    d.setTime(d.getTime() - 3 * 60 * 60 * 1000);
   
     // Formata a data no fuso horário de São Paulo
     const formatter = new Intl.DateTimeFormat("pt-BR", {
@@ -39,7 +36,7 @@ export function formatDate(date?: Date | string | null): string | null {
   
   /**
    * Recebe valor em centavos (integer) e retorna string formatada em reais
-   * Exemplo: 4152 -> "R$ 41,52"
+   * Exemplo: 4152 -> "41,52"
    */
 
 

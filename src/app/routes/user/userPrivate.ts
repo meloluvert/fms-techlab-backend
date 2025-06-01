@@ -3,8 +3,8 @@ import userController from "../../controllers/UserController";
 
 const userRouterPrivate = Router();
 
-userRouterPrivate.get("/", userController.show); // GET /user
-userRouterPrivate.put("/",  userController.update); // PUT /user
-userRouterPrivate.delete("/", userController.remove); // DELETE /user
+userRouterPrivate.get("/", userController.show); 
+userRouterPrivate.put("/",  userController.update); 
+userRouterPrivate.delete("/", userController.remove); 
 
 export default userRouterPrivate;
