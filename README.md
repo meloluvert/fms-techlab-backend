@@ -119,7 +119,7 @@ Exemplo de teste implementado: `AccountService` (`newAccount`)
 ---
 
 ## 📦 Rotas principais (RESTful)
-Todas as rotas exceto de registro e login de usuário **PRECISAM** do token passado no cabeçalho da requsição 
+Todas as rotas exceto de registro e login de usuário **PRECISAM** do token passado no cabeçalho da requisição 
 
 | Verbo | Rota                | Ação                     |
 |-------|---------------------|--------------------------|
