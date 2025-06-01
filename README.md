@@ -129,9 +129,9 @@ Exemplo de teste implementado: `AccountService` (`newAccount`)
 | DELETE| `/account/:id`      | Soft delete              |
 | POST  | `/transactions`      | Criar transferência      |
 | GET   | `/transactions`     | Buscar transações        |
-Todas as rotas exceto de registro e login de usuário **PRECISAM** do token passado no cabeçalho da requsição 
 
 ---
+Todas as rotas exceto de registro e login de usuário **PRECISAM** do token passado no cabeçalho da requsição 
 
 ## 🧹 Clean Code & Boas práticas
 
